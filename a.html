@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Light Control Interface</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Verdana', sans-serif;
+            background-color: #4b0082;
+            color: white;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #ffffff;
+            color: #333333;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .popup-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        #lightContainer {
+            margin: 25px auto;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 15px;
+            background-color: #f5f5f5;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .light-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .light {
+            width: 60px;
+            height: 90px;
+            background-image: url('https://pics.clipartpng.com/Light_Bulb_PNG_Clip_Art-2102.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+
+        .light.active {
+            background-image: url('https://pics.clipartpng.com/midle/Yellow_Light_Bulb_PNG_Clip_Art-2108.png');
+        }
+
+        .switch {
+            width: 40px;
+            height: 22px;
+            background: #ff4500;
+            border-radius: 15px;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.3s;
+        }
+
+        .switch::before {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: 0.3s;
+        }
+
+        .switch.on {
+            background: #32cd32;
+        }
+
+        .switch.on::before {
+            transform: translateX(18px);
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        button#launchButton {
+            background-color: white;
+            color: #4b0082;
+        }
+
+        button#applyButton {
+            background-color: #228b22;
+            color: white;
+        }
+
+        button#clearButton {
+            background-color: #ff0000;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div id="interface">
+        <!-- Launch Button -->
+        <button id="launchButton">Launch</button>
+
+        <!-- Popup Modal -->
+        <div id="popup" class="hidden">
+            <div class="popup-content">
+                <h2>Configure Lights</h2>
+                <label for="bulbCount">Number of Lights:</label>
+                <input type="number" id="bulbCount" min="1">
+                <button id="applyButton">Apply</button>
+            </div>
+        </div>
+
+        <!-- Lights Section -->
+        <div id="lightContainer" class="hidden"></div>
+
+        <!-- Clear Button -->
+        <button id="clearButton" class="hidden">Clear</button>
+    </div>
+
+    <script>
+        const launchButton = document.getElementById('launchButton');
+        const popup = document.getElementById('popup');
+        const applyButton = document.getElementById('applyButton');
+        const bulbCountInput = document.getElementById('bulbCount');
+        const lightContainer = document.getElementById('lightContainer');
+        const clearButton = document.getElementById('clearButton');
+
+        // Display popup when Launch is clicked
+        launchButton.addEventListener('click', () => {
+            launchButton.classList.add('hidden');
+            popup.classList.remove('hidden');
+        });
+
+        // Generate lights when Apply is clicked
+        applyButton.addEventListener('click', () => {
+            const bulbCount = parseInt(bulbCountInput.value);
+            if (isNaN(bulbCount) || bulbCount < 1) {
+                alert('Enter a valid number of lights.');
+                return;
+            }
+
+            popup.classList.add('hidden');
+            lightContainer.innerHTML = ''; // Clear existing lights
+
+            for (let i = 0; i < bulbCount; i++) {
+                const lightBox = document.createElement('div');
+                lightBox.classList.add('light-box');
+
+                const light = document.createElement('div');
+                light.classList.add('light');
+
+                const switchButton = document.createElement('div');
+                switchButton.classList.add('switch');
+
+                switchButton.addEventListener('click', () => {
+                    light.classList.toggle('active');
+                    switchButton.classList.toggle('on');
+                });
+
+                lightBox.appendChild(light);
+                lightBox.appendChild(switchButton);
+                lightContainer.appendChild(lightBox);
+            }
+
+            lightContainer.classList.remove('hidden');
+            clearButton.classList.remove('hidden');
+        });
+
+        // Reset application
+        clearButton.addEventListener('click', () => {
+            lightContainer.classList.add('hidden');
+            lightContainer.innerHTML = '';
+            clearButton.classList.add('hidden');
+            popup.classList.add('hidden');
+            launchButton.classList.remove('hidden');
+            bulbCountInput.value = '';
+        });
+    </script>
+</body>
+</html>
